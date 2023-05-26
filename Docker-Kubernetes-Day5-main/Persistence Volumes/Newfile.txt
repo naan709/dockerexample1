@@ -1,0 +1,389 @@
+
+Portability
+Repeatability
+
+
+
+
+
+
+
+1
+
+
+
+
+
+
+
+
+
+
+
+
+https://cloudlabs.nuvepro.com/company/ImarticusPvtLtd/home	
+
+Icitimayuser107	Imarticus123$
+
+https://us06web.zoom.us/j/85848782835?pwd=Nm1SaXdJbFRvWEF3RHVqUjhaWFZOQT09
+
+Meeting ID: 858 4878 2835
+Passcode: 660273
+
+
+Day1:
+Docker Commands:
+Day 1
+1. docker --version
+2. docker version
+3. docker --help
+4. docker <command> --help
+
+## Docker images creation
+1. to create a small nodejs application 
+2. create app.js
+3. copy the below code 
+
+let express = require('express')
+
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('<h2>First docker session!</h2>');
+});
+
+app.listen(3000);
+
+4. open new terminal
+5. type 'npm init'
+6. type 'npm install express'
+7. after deleting the dependencies type 'npm install'
+8. create a Docker file
+FROM - Defines a base for your image
+WORKDIR - Sets the working directory for instructions
+COPY - Copies new files or directories from src to dest
+RUN - Executes any command in a new layer
+EXPOSE - Exposing the port as public
+CMD - Command to be executed to run the program
+ex:
+FROM node:14
+
+WORKDIR /app
+
+COPY package.json .
+
+run npm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["node", "app.js"]
+
+9. build docker image - 'docker build .'
+10. run the docker image - 'docker run <imageName>
+11. to check the running containers - 'docker ps'
+12. stop the running container immediately - 'docker kill [containerID]'
+13. stop the running container - 'docker stop [containerID]'
+14. to check all images - 'docker images'
+15. to check all processes - 'docker ps -a'
+16. to start a stopped container - 'docker start [<containerName>] or containerID'
+17. to start container in detached mode - 'docker run -d -p exposedDockerPort:serverPort imageName'
+18. to get attached to a container in attach mode - 'docker attach conatinerName'
+19. to remove one or more containers (stopped containers) - 'docker rm [containerName]'
+20. to remove one or more images (not connected to any running container) - 'docker rmi [imageName]' 
+21. to remove a container once it is stopped/killed - 'docker run -d -p exposedDockerPort:serverPort --rm imageName'
+22. to name a container - 'docker --name name imageName'
+23. 		name:tag
+name - Defines a group of images (eg. node)
+tag - Defines a specialized image within a group of images (eg. 14)
+
+24. to give name and tag to an image - 'docker build -t name:tag .'
+25. to start a container with custom imagename - 'docker run -p 80:3000 -d --rm --name nodecontainer name:tag'
+26. to delete all unused images - 'docker image prune -a'
+27. to rename the existing image - docker tag 'oldImageName:tag' 'newImageName'
+28. to push local image to dockerhub
+28.1 login using - 'docker login'
+28.1.1 enter usename and password
+
+https://codeshare.io/yozwbl
+Day 3:
+
+Volumes :
+Anonymous volumes (Created and managed by docker)
+Named volumes  (created and managed by us)
+
+
+
+------------volumes------------------------------------
+
+make a file server.js inside folder day3 and copy the below code from line 3 to 47 inside the server.js
+
+const fs = require('fs').promises;
+const exists = require('fs').exists;
+const path = require('path');
+
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const app = express();
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static('public'));
+app.use('/feedback', express.static('feedback'));
+
+app.get('/', (req, res) => {
+  const filePath = path.join(__dirname, 'pages', 'feedback.html');
+  res.sendFile(filePath);
+});
+
+app.get('/exists', (req, res) => {
+  const filePath = path.join(__dirname, 'pages', 'exists.html');
+  res.sendFile(filePath);
+});
+
+app.post('/create', async (req, res) => {
+  const title = req.body.title;
+  const content = req.body.text;
+
+  const adjTitle = title.toLowerCase();
+
+  const tempFilePath = path.join(__dirname, 'temp', adjTitle + '.txt');
+  const finalFilePath = path.join(__dirname, 'feedback', adjTitle + '.txt');
+
+  await fs.writeFile(tempFilePath, content);
+  exists(finalFilePath, async (exists) => {
+    if (exists) {
+      res.redirect('/exists');
+    } else {
+      await fs.rename(tempFilePath, finalFilePath);
+      res.redirect('/');
+    }
+  });
+});
+
+app.listen(80);
+--------------------------------------------------------------------------------------------------------------------
+
+----> create folder named as public inside folder Day 3
+----> inside it, make a file named as style.css, and paste the code below
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+header {
+  width: 100%;
+  height: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #d13b0a;
+}
+
+header h1 {
+  margin: 0;
+}
+
+header a {
+  color: white;
+  text-decoration: none;
+}
+
+section {
+  margin: 2rem auto;
+  max-width: 30rem;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  border-radius: 12px;
+}
+
+.form-control {
+  margin: 0.5rem 0;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+input, 
+textarea {
+  font: inherit;
+  display: block;
+  width: 100%;
+  padding: 0.15rem;
+  border: 1px solid #ccc;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #d13b0a;
+  outline: none;
+  background-color: #ffe6ff;
+}
+
+button {
+  cursor: pointer;
+  font: inherit;
+  border: 1px solid #d13b0a;
+  background-color: #d13b0a;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 30px;
+}
+
+-------------------------------------------------------------------------------------------------------------------
+
+
+-----> Create a folder named as pages inside the folder Day3
+-----> inside it make two files named as 1) exists.html  2) feedback.html
+
+code for exists.html is given below
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>This title exists already!</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">MySite</a></h1>
+    </header>
+    <main>
+      <section>
+        <h2>This title exists already!</h2>
+        <p>Please pick a different one.</p>
+        <p><a href="/">Start again</a></p>
+      </section>
+    </main>
+  </body>
+</html>
+
+
+code for feedback.html is given below
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Share some Feedback!</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">MySite</a></h1>
+    </header>
+    <main>
+      <section>
+        <h2>Your Feedback</h2>
+        <form action="/create" method="POST">
+          <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" />
+          </div>
+          <div class="form-control">
+            <label for="text">Document Text</label>
+            <textarea name="text" id="text" rows="10"></textarea>
+          </div>
+          <button>Save</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
+
+29. Post creation of the folder structure execute these commands
+npm init
+npm install express
+npm install fs
+npm install path
+npm install body-parser
+
+30. Docker volumes
+to get help for volume commands - 'docker volume --help'
+31. list all available volumes - 'docker volume ls'
+32. to create named volume - '-v nameofVolume:path_inside_the_container'
+33. to inspect the volume - 'docker volume inspect volumeName'
+
+
+1. build the image
+2. start the container with named volume flag
+3. start the browser save the data
+4. delete the container or remove the container
+5. chech the processes docker ps and docker ps -a
+6. check the volumes - docker volume ls
+7. start a new container by attaching the previously created volume
+8. check the data on the site
+
+
+--------------- Networking
+1. npm init
+2. npm install express axios body-parser mongoose 
+
+3. to create a common network - 'docker network create <networkName>'
+4. to get network help - 'docker network --help'
+5. to list all existing networks - 'docker network ls'
+6. to create mongodb container in the network - 'docker run -d --name mongodb --network favorites-net mongo'
+7. to start a container inside the same network - 'docker run --name favorites-container --network favorites-net -p 3000:3000 favorites:image'
+https://codeshare.io/N3AJAm
+
+# disadvantages of container 
+1. container crash
+2. replacing the container
+3. traffic spike
+4. traffic distribution
+5. update
+6. availability of system
+
+* One node inside one cluster
+* multiple node inside one cluster
+
+* one pod inside one node
+* multiple pod inside one node
+
+
+https://github.com/anurag-chiplunkar/Docker-Kubernetes-Day5
+
+
+
+1. see how to build the kubernetes files from scratch - 
+2. we will see how to do the same things using declarative approach
+3. to check the status of the cluster - minikube status
+4. to start the cluster - minikube start
+5. to view the dashboard - minikube dashboard
+6. kubectl create deployment first-app --image=kub-first-app
+6. docker tag kub-first-app brainstrom/kub-first-app
+7. kubectl delete deployment first-app
+8. kubectl get deployment
+9. kubectl create deployment first-app --image=brainstrom/kub-first-app
+
+
+
+
+
+Exposing the deployment
+1. kubectl expose deployment first-app --type=LoadBalancer --port=8080
+2. kubectl get services
+3. minikube service first-app
+
+Scaling
+1. kubectl scale deployment/first-app --replicas=3
+Kubectl get pods
+
+Kubectl apply -f deployment.yaml -f service.yaml
+
+
+
+
